@@ -8,7 +8,7 @@ async function crear(req, res, next) {
   try {
     const errores = validarRegistro(req.body);
     if (errores.length > 0) {
-      return res.status(400).json({ ok: false, errores });
+      return res.status(400).json({ success: false, errores });
     }
 
     const datos = sanitizarRegistro(req.body);
@@ -25,7 +25,7 @@ async function crear(req, res, next) {
     );
 
     return res.status(201).json({
-      ok: true,
+      success: true,
       mensaje: 'Registro creado exitosamente.',
       dato: rows[0],
     });
@@ -37,22 +37,17 @@ async function crear(req, res, next) {
 //Get All registros
 async function leerTodos(req, res, next) {
   try {
-
-    const limite = Math.min(100, Math.max(1, parseInt(req.query.limite || '10', 10)));
-    const offset = (pagina - 1) * limite;
-
     const [[{ total }]] = await pool.query(
       'SELECT COUNT(*) AS total FROM registros',
     );
 
     const [rows] = await pool.query(
-      `SELECT * FROM registros ORDER BY created_at DESC LIMIT ${limite} OFFSET ${offset}`,
+      `SELECT * FROM registros ORDER BY created_at DESC`,
     );
 
     return res.status(200).json({
-      ok: true,
+      success: true,
       total,
-      limite,
       datos: rows,
     });
   } catch (err) {
@@ -66,7 +61,7 @@ async function leerUno(req, res, next) {
     const { id } = req.params;
 
     if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
-      return res.status(400).json({ ok: false, mensaje: 'El ID debe ser un número entero positivo.' });
+      return res.status(400).json({ success: false, mensaje: 'El ID debe ser un número entero positivo.' });
     }
 
     const [rows] = await pool.execute(
@@ -75,10 +70,10 @@ async function leerUno(req, res, next) {
     );
 
     if (rows.length === 0) {
-      return res.status(404).json({ ok: false, mensaje: `No se encontró el registro con ID ${id}.` });
+      return res.status(404).json({ success: false, mensaje: `No se encontró el registro con ID ${id}.` });
     }
 
-    return res.status(200).json({ ok: true, dato: rows[0] });
+    return res.status(200).json({ success: true, dato: rows[0] });
   } catch (err) {
     return next(err);
   }
@@ -90,7 +85,7 @@ async function actualizar(req, res, next) {
     const { id } = req.params;
 
     if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
-      return res.status(400).json({ ok: false, mensaje: 'El ID debe ser un número entero positivo.' });
+      return res.status(400).json({ success: false, mensaje: 'El ID debe ser un número entero positivo.' });
     }
 
     // Verificar existencia
@@ -98,12 +93,12 @@ async function actualizar(req, res, next) {
       'SELECT id FROM registros WHERE id = ?', [id],
     );
     if (existe.length === 0) {
-      return res.status(404).json({ ok: false, mensaje: `No se encontró el registro con ID ${id}.` });
+      return res.status(404).json({ success: false, mensaje: `No se encontró el registro con ID ${id}.` });
     }
 
     const errores = validarRegistro(req.body);
     if (errores.length > 0) {
-      return res.status(400).json({ ok: false, errores });
+      return res.status(400).json({ success: false, errores });
     }
 
     const datos = sanitizarRegistro(req.body);
@@ -120,7 +115,7 @@ async function actualizar(req, res, next) {
     );
 
     return res.status(200).json({
-      ok: true,
+      success: true,
       mensaje: 'Registro actualizado exitosamente.',
       dato: rows[0],
     });
@@ -135,14 +130,14 @@ async function actualizarParcial(req, res, next) {
     const { id } = req.params;
 
     if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
-      return res.status(400).json({ ok: false, mensaje: 'El ID debe ser un número entero positivo.' });
+      return res.status(400).json({ success: false, mensaje: 'El ID debe ser un número entero positivo.' });
     }
 
     const [existe] = await pool.execute(
       'SELECT * FROM registros WHERE id = ?', [id],
     );
     if (existe.length === 0) {
-      return res.status(404).json({ ok: false, mensaje: `No se encontró el registro con ID ${id}.` });
+      return res.status(404).json({ success: false, mensaje: `No se encontró el registro con ID ${id}.` });
     }
 
     // Agarra los datos existentes y reemplaza con los nuevos
@@ -156,7 +151,7 @@ async function actualizarParcial(req, res, next) {
 
     const errores = validarRegistro(merged);
     if (errores.length > 0) {
-      return res.status(400).json({ ok: false, errores });
+      return res.status(400).json({ success: false, errores });
     }
 
     const datos = sanitizarRegistro(merged);
@@ -171,7 +166,7 @@ async function actualizarParcial(req, res, next) {
     const [rows] = await pool.execute('SELECT * FROM registros WHERE id = ?', [id]);
 
     return res.status(200).json({
-      ok: true,
+      success: true,
       mensaje: 'Registro actualizado parcialmente.',
       dato: rows[0],
     });
@@ -186,20 +181,20 @@ async function eliminar(req, res, next) {
     const { id } = req.params;
 
     if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
-      return res.status(400).json({ ok: false, mensaje: 'El ID debe ser un número entero positivo.' });
+      return res.status(400).json({ success: false, mensaje: 'El ID debe ser un número entero positivo.' });
     }
 
     const [existe] = await pool.execute(
       'SELECT id FROM registros WHERE id = ?', [id],
     );
     if (existe.length === 0) {
-      return res.status(404).json({ ok: false, mensaje: `No se encontró el registro con ID ${id}.` });
+      return res.status(404).json({ success: false, mensaje: `No se encontró el registro con ID ${id}.` });
     }
 
     await pool.execute('DELETE FROM registros WHERE id = ?', [id]);
 
     return res.status(200).json({
-      ok: true,
+      success: true,
       mensaje: `Registro con ID ${id} eliminado exitosamente.`,
     });
   } catch (err) {

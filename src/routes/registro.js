@@ -7,7 +7,7 @@ const router = Router();
 
 // Health check de API
 router.get('/health', (req, res) => {
-  res.status(200).json({ ok: true, mensaje: 'API funcionando correctamente.', timestamp: new Date() });
+  res.status(200).json({ success: true, mensaje: 'API funcionando correctamente.', timestamp: new Date() });
 });
 
 // CRUD de registros

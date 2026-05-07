@@ -33,7 +33,7 @@ function validarRegistro(data) {
   //Validacion de formatos del formulario
   if (rfc && String(rfc).trim() !== '') {
     const rfcClean = String(rfc).trim().toUpperCase();
-    if (!RFC_MORAL.test(rfcClean) && !RFC_FISICA.test(rfcClean)) {
+    if (!RFC_FISICA.test(rfcClean)) {
       errores.push('El RFC no tiene un formato válido (ej: PEGJ850101ABC).');
     }
   }
