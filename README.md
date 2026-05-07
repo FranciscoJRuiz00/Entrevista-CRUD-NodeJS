@@ -12,7 +12,7 @@ Guia rapida para configuracion y ejecucion del proyecto.
 
 2.  **Entrar a la carpeta del proyecto:**
     ```bash
-    cd CRUD_MODULES
+    cd crud-microservice
     ```
 
 3.  **Instalar dependencias:**
