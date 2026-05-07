@@ -4,6 +4,11 @@ Guia rapida para configuracion y ejecucion del proyecto.
 ## Prerrequisitos
 
 **Node.js** Versión `22.11.0` o superior.
+**Importar la base de datos:**
+    ```bash
+    mysql -u root -p < database.sql
+    ```
+(si no funciona se puede importar manualmente con el database.sql provisto en este repositorio)
 
 1.  **Clonar el repositorio:**
     ```bash
