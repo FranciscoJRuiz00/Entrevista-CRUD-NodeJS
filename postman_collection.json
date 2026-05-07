@@ -1,0 +1,161 @@
+{
+  "info": {
+    "name": "CRUD Microservice - NODEJS",
+    "_postman_id": "crud-microservice-collection",
+    "description": "Sentencias para probar el microservicio CRUD de NODE JS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/health",
+        "description": "Verifica que el servidor esté funcionando."
+      }
+    },
+    {
+      "name": "Listar todos los registros",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/registros",
+          "host": ["{{base_url}}"],
+          "path": ["registros"],
+          "query": [
+            { "key": "pagina", "value": "1" },
+            { "key": "limite", "value": "10" }
+          ]
+        },
+        "description": "Obtiene todos los registros con paginación opcional."
+      }
+    },
+    {
+      "name": "Obtener registro por ID",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/registros/1",
+        "description": "Obtiene un registro específico por su ID."
+      }
+    },
+    {
+      "name": "Crear registro (válido)",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/registros",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre_completo\": \"Carlos Ramírez López\",\n  \"rfc\": \"RALC900101XYZ\",\n  \"correo\": \"carlos.ramirez@ejemplo.com\",\n  \"codigo_postal\": \"97000\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "description": "Crea un nuevo registro con datos válidos."
+      }
+    },
+    {
+      "name": "Crear registro (RFC inválido)",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/registros",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre_completo\": \"Test Usuario\",\n  \"rfc\": \"RFC_INVALIDO\",\n  \"correo\": \"test@ejemplo.com\",\n  \"codigo_postal\": \"97000\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "description": "Prueba la validación de RFC inválido. Debe devolver error 400."
+      }
+    },
+    {
+      "name": "Crear registro (correo inválido)",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/registros",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre_completo\": \"Test Usuario\",\n  \"rfc\": \"RALC900101XYZ\",\n  \"correo\": \"correo_invalido\",\n  \"codigo_postal\": \"97000\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "description": "Prueba la validación de correo inválido. Debe devolver error 400."
+      }
+    },
+    {
+      "name": "Crear registro (campos faltantes)",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/registros",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre_completo\": \"Test Usuario\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "description": "Prueba con campos faltantes. Debe devolver error 400 con lista de errores."
+      }
+    },
+    {
+      "name": "Actualizar registro completo (PUT)",
+      "request": {
+        "method": "PUT",
+        "url": "{{base_url}}/registros/1",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre_completo\": \"Carlos Ramírez López Actualizado\",\n  \"rfc\": \"RALC900101XYZ\",\n  \"correo\": \"carlos.nuevo@ejemplo.com\",\n  \"codigo_postal\": \"97100\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "description": "Actualiza todos los campos de un registro."
+      }
+    },
+    {
+      "name": "Actualizar registro parcial (PATCH)",
+      "request": {
+        "method": "PATCH",
+        "url": "{{base_url}}/registros/1",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigo_postal\": \"97200\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "description": "Actualiza solo los campos enviados, mantiene el resto intacto."
+      }
+    },
+    {
+      "name": "Eliminar registro",
+      "request": {
+        "method": "DELETE",
+        "url": "{{base_url}}/registros/1",
+        "description": "Elimina un registro por ID."
+      }
+    },
+    {
+      "name": "Registro no encontrado (404)",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/registros/99999",
+        "description": "Prueba el manejo de ID inexistente. Debe devolver 404."
+      }
+    }
+  ]
+}

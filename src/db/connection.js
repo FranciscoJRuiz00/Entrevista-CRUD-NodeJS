@@ -2,7 +2,7 @@
 
 const mysql = require('mysql2/promise');
 
-// Pool de conexiones — reutilizable en Lambda (warm starts)
+// Conexiones
 const pool = mysql.createPool({
   host:               process.env.DB_HOST     || 'localhost',
   port:               parseInt(process.env.DB_PORT || '3306', 10),

@@ -1,7 +1,9 @@
 'use strict';
 
-const express = require('express');
-const cors    = require('cors');
+const express            = require('express');
+const cors               = require('cors');
+const registrosRouter    = require('./routes/registro');
+const { errorHandler, notFound } = require('./middleware/errorHandler');
 
 const app = express();
 
@@ -16,21 +18,25 @@ app.use((req, _res, next) => {
 
 // Ruta raiz
 app.get('/', (req, res) => {
-  res.json({
-    ok: true,
+  res.status(200).json({
+    success: true,
     servicio: 'crud-microservice',
     version: '1.0.0',
+    endpoints: {
+      'GET    /registros':        'Listar todos los registros',
+      'POST   /registros':        'Crear registro',
+      'GET    /registros/:id':    'Obtener un registro',
+      'PUT    /registros/:id':    'Actualizar completo de registro',
+      'PATCH  /registros/:id':    'Actualizado parcial de registro',
+      'DELETE /registros/:id':    'Eliminar registro',
+      'GET    /health': 'Health check',
+    },
   });
 });
 
-// Check de health
-app.get('/health', (req, res) => {
-  res.json({ ok: true, mensaje: 'Servidor funciona.' });
-});
+app.use('/registros', registrosRouter);
 
-// Error 404
-app.use((req, res) => {
-  res.status(404).json({ ok: false, mensaje: `Ruta '${req.originalUrl}' no encontrada.` });
-});
+app.use(notFound);
+app.use(errorHandler);
 
 module.exports = app;
